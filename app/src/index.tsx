@@ -1,10 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import App from './components/App';
 import * as serviceWorker from './serviceWorker';
+import {BrowserRouter} from "react-router-dom";
+import Incident from "./incident-management/incident";
+import Person from "./incident-management/person";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const person = new Person(1, "Anth", "Richardson");
+
+let incidents: Incident[] = [
+	new Incident(1, person),
+	new Incident(2, person),
+];
+
+ReactDOM.render(<BrowserRouter><App Incidents={incidents} /></BrowserRouter>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

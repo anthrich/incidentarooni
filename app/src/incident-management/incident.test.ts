@@ -1,7 +1,7 @@
 import Incident from "./incident";
 import IncidentType from "./incident-type";
 import Person from "./person";
-import EntityTests from "./entity.test";
+import EntityTests from "./entity-tests";
 import Entity from "./entity";
 
 

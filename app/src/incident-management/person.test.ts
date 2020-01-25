@@ -1,4 +1,4 @@
-import EntityTests from "./entity.test";
+import EntityTests from "./entity-tests";
 import Entity from "./entity";
 import Person from "./person";
 
