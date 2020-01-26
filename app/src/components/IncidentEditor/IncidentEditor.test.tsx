@@ -1,4 +1,4 @@
-import {render} from "@testing-library/react";
+import {render, fireEvent} from "@testing-library/react";
 import {MemoryRouter} from "react-router";
 import React from "react";
 import IncidentEditor from "./IncidentEditor";
@@ -25,7 +25,9 @@ describe('incident editor', () => {
 			<MemoryRouter initialEntries={['/incidents/1232']}>
 				<Switch>
 					<Route path={"/incidents"}>
-						<IncidentEditor GetIncidentById={incidentAPI.GetById}></IncidentEditor>
+						<IncidentEditor
+							GetIncidentById={incidentAPI.GetById}
+							UpdateIncident={incidentAPI.Update}></IncidentEditor>
 					</Route>
 				</Switch>
 			</MemoryRouter>
@@ -38,16 +40,16 @@ describe('incident editor', () => {
 
 	test('displays the relevant incident description editor', () => {
 		// arrange
-		const person = new Person(432, "Anth", "Rich");
-		const incidents = [new Incident(1232, person, IncidentType.Other, "The description")];
-		const incidentAPI = new InMemoryIncidentAPI(incidents);
+		const incidentAPI = getIncidentAPI();
 
 		// act
 		const result = render(
 			<MemoryRouter initialEntries={['/incidents/1232']}>
 				<Switch>
 					<Route path={"/incidents"}>
-						<IncidentEditor GetIncidentById={incidentAPI.GetById}></IncidentEditor>
+						<IncidentEditor
+							GetIncidentById={incidentAPI.GetById}
+							UpdateIncident={incidentAPI.Update}></IncidentEditor>
 					</Route>
 				</Switch>
 			</MemoryRouter>
@@ -55,6 +57,32 @@ describe('incident editor', () => {
 
 		// assert
 		const description = result.container.querySelector("form textarea.description") as HTMLTextAreaElement;
-		expect(description.value).toEqual(incidents[0].getDescription());
+		expect(description.value).toEqual(incidentAPI.GetById(1232).getDescription());
+	});
+
+	test('saving the incident saves the new incident description', () => {
+		// arrange
+		const incidentAPI = getIncidentAPI();
+		const result = render(
+			<MemoryRouter initialEntries={['/incidents/1232']}>
+				<Switch>
+					<Route path={"/incidents"}>
+						<IncidentEditor
+							GetIncidentById={incidentAPI.GetById}
+							UpdateIncident={incidentAPI.Update}></IncidentEditor>
+					</Route>
+				</Switch>
+			</MemoryRouter>
+		);
+		const description = result.container.querySelector("form textarea.description") as HTMLTextAreaElement;
+		fireEvent.change(description, { target: { value: "edited description" } });
+		const saveButton = result.container.querySelector("form button.save") as HTMLButtonElement;
+
+		// act
+		fireEvent.click(saveButton);
+
+		// assert
+		const incident = incidentAPI.GetById(1232);
+		expect(incident.getDescription()).toEqual("edited description");
 	});
 });

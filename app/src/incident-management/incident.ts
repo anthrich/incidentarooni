@@ -27,4 +27,8 @@ export default class Incident extends Entity {
 	public getInvolvedPerson() {
 		return this._person;
 	}
+
+	public setDescription(description: string) {
+		this._description = description;
+	}
 }

@@ -1,11 +1,12 @@
 import React from 'react';
-import './App.css';
+import './App.scss';
 import {Route, Switch} from "react-router-dom";
 import IncidentList from "./IncidentList/IncidentList";
 import IncidentEditor from "./IncidentEditor/IncidentEditor";
 import Incident from "../incident-management/incident";
 import Person from "../incident-management/person";
 import IncidentType from "../incident-management/incident-type";
+import { IncidentAPI } from '../apis/IncidentAPI';
 
 const App: React.FC<AppProps> = props => {
 	return (
@@ -16,12 +17,11 @@ const App: React.FC<AppProps> = props => {
 			<Switch>
 				<Route path={"/incidents"}>
 					<IncidentEditor
-						GetIncidentById={
-							(id) => new Incident(id, new Person(1, "1", "1"), IncidentType.Other, "Desc")
-						}/>
+						GetIncidentById={props.IncidentAPI.GetById}
+						UpdateIncident={props.IncidentAPI.Update}/>
 				</Route>
 				<Route path={"/"}>
-					<IncidentList Incidents={props.Incidents}></IncidentList>
+					<IncidentList Incidents={props.IncidentAPI.Get()}></IncidentList>
 				</Route>
 			</Switch>
 		</div>
@@ -29,7 +29,7 @@ const App: React.FC<AppProps> = props => {
 }
 
 export interface AppProps {
-	Incidents: Array<Incident>;
+	IncidentAPI: IncidentAPI;
 }
 
 export default App;

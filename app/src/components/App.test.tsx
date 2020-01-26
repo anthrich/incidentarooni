@@ -1,28 +1,37 @@
 import React from 'react';
-import {render} from '@testing-library/react';
-import App, {AppProps} from './App';
+import {fireEvent, render} from '@testing-library/react';
+import App from './App';
 import {MemoryRouter} from "react-router-dom";
 import Incident from "../incident-management/incident";
 import Person from "../incident-management/person";
+import InMemoryIncidentAPI from "../apis/InMemoryIncidentAPI";
 
 describe('the application', () => {
 
 	test('renders the incident-list component', () => {
+		// arrange
+		const incidentAPI = new InMemoryIncidentAPI([]);
+
 		// act
-		// assert
 		const result = render(
 			<MemoryRouter initialEntries={['/']}>
-				<App Incidents={new Array<Incident>()}/>
+				<App IncidentAPI={incidentAPI}/>
 			</MemoryRouter>
 		), listElement = result.container.querySelector(".incident-list");
+
+		// assert
 		expect(listElement).toBeInTheDocument();
 	});
 
 	test('renders the incident-editor component', () => {
+		// arrange
+		const person = new Person(534, "Anth", "Richardson");
+		const incidentAPI = new InMemoryIncidentAPI([new Incident(1, person)]);
+
 		// act
 		const result = render(
 			<MemoryRouter initialEntries={['/incidents/1']}>
-				<App Incidents={new Array<Incident>()}/>
+				<App IncidentAPI={incidentAPI}/>
 			</MemoryRouter>
 		);
 
@@ -40,11 +49,12 @@ describe('the application', () => {
 			new Incident(12345, person),
 			new Incident(12346, person)
 		];
+		const incidentAPI = new InMemoryIncidentAPI(appIncidents);
 
 		// act
 		const result = render(
 			<MemoryRouter initialEntries={['/']}>
-				<App Incidents={appIncidents}/>
+				<App IncidentAPI={incidentAPI}/>
 			</MemoryRouter>
 		);
 
@@ -52,4 +62,26 @@ describe('the application', () => {
 		const incidentElements = result.container.querySelectorAll(".incident-list .incident");
 		expect(incidentElements.length).toEqual(4);
 	});
+
+	["Update", "GetById"].forEach(
+		(testCase) => {
+			test(`passes the incident api ${testCase} method to the incident editor`, () => {
+				// arrange
+				const person = new Person(534, "Anth", "Richardson");
+				const incidentAPI = new InMemoryIncidentAPI([new Incident(123, person)]);
+
+				// act
+				const result = render(
+					<MemoryRouter initialEntries={['/incidents/123']}>
+						<App IncidentAPI={incidentAPI}/>
+					</MemoryRouter>
+				);
+
+				// assert
+				const editForm = result.container.querySelector(".incident-editor form") as HTMLFormElement;
+				fireEvent.submit(editForm);
+				expect(incidentAPI.Calls).toContain(testCase);
+			});
+		}
+	);
 });
