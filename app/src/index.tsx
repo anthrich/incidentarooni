@@ -10,11 +10,16 @@ import Person from "./incident-management/person";
 const person = new Person(1, "Anth", "Richardson");
 
 let incidents: Incident[] = [
-	new Incident(1, person),
-	new Incident(2, person),
+	new Incident(12345, person),
+	new Incident(25432, person),
+	new Incident(15432, person),
 ];
 
-ReactDOM.render(<BrowserRouter><App Incidents={incidents} /></BrowserRouter>, document.getElementById('root'));
+ReactDOM.render(
+	<BrowserRouter>
+		<App Incidents={incidents} />
+	</BrowserRouter>,
+	document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

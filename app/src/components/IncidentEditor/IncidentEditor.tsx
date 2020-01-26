@@ -1,16 +1,17 @@
 import React from 'react';
 import { Switch, useRouteMatch, Route, useParams} from 'react-router-dom';
+import Incident from "../../incident-management/incident";
+import './IncidentEditor.scss';
 
-const IncidentEditor: React.FC = () => {
+const IncidentEditor: React.FC<IncidentEditorProps> = props => {
 
 	let match = useRouteMatch();
 
 	return(
 		<div className={"incident-editor"}>
-			Incident Editor
 			<Switch>
 				<Route path={`${match.path}/:incidentId`}>
-					<Editor></Editor>
+					<Editor GetIncidentById={props.GetIncidentById}></Editor>
 				</Route>
 				<Route path={match.path}>
 					<div>Creating incident</div>
@@ -19,9 +20,18 @@ const IncidentEditor: React.FC = () => {
 		</div>);
 };
 
-function Editor() {
+function Editor(props: IncidentEditorProps) {
 	let { incidentId } = useParams();
-	return <h3>Requested incidentId ID: {incidentId}</h3>;
+	const id = parseInt(incidentId || "0");
+	const incident = props.GetIncidentById(id);
+	return <form>
+		<h3>Incident ID: {incidentId}</h3>
+		<textarea className={"description"} defaultValue={incident.getDescription()}></textarea>
+	</form>;
+}
+
+export interface IncidentEditorProps {
+	GetIncidentById(id: number) : Incident
 }
 
 export default IncidentEditor;

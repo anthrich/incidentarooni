@@ -1,12 +1,11 @@
 import React from 'react';
 import './App.css';
-import {
-	Switch,
-	Route
-} from "react-router-dom";
+import {Route, Switch} from "react-router-dom";
 import IncidentList from "./IncidentList/IncidentList";
 import IncidentEditor from "./IncidentEditor/IncidentEditor";
 import Incident from "../incident-management/incident";
+import Person from "../incident-management/person";
+import IncidentType from "../incident-management/incident-type";
 
 const App: React.FC<AppProps> = props => {
 	return (
@@ -16,7 +15,10 @@ const App: React.FC<AppProps> = props => {
 			</header>
 			<Switch>
 				<Route path={"/incidents"}>
-					<IncidentEditor></IncidentEditor>
+					<IncidentEditor
+						GetIncidentById={
+							(id) => new Incident(id, new Person(1, "1", "1"), IncidentType.Other, "Desc")
+						}/>
 				</Route>
 				<Route path={"/"}>
 					<IncidentList Incidents={props.Incidents}></IncidentList>
